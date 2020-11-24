@@ -8,7 +8,7 @@ package gtfsparser
 
 import (
 	"archive/zip"
-	"errors"
+	"fmt"
 	"io"
 	"os"
 	opath "path"
@@ -144,14 +144,14 @@ func (feed *Feed) getFile(path string, name string) (io.Reader, error) {
 		}
 	}
 
-	return nil, errors.New("Not found.")
+	return nil, fmt.Errorf("not found")
 }
 
 func (feed *Feed) parseAgencies(path string) (err error) {
 	file, e := feed.getFile(path, "agency.txt")
 
 	if e != nil {
-		return errors.New("Could not open required file agency.txt")
+		return fmt.Errorf("could not open required file agency.txt")
 	}
 
 	reader := NewCsvParser(file)
@@ -176,7 +176,7 @@ func (feed *Feed) parseStops(path string) (err error) {
 	file, e := feed.getFile(path, "stops.txt")
 
 	if e != nil {
-		return errors.New("Could not open required file stops.txt")
+		return fmt.Errorf("could not open required file stops.txt")
 	}
 
 	reader := NewCsvParser(file)
@@ -200,7 +200,7 @@ func (feed *Feed) parseRoutes(path string) (err error) {
 	file, e := feed.getFile(path, "routes.txt")
 
 	if e != nil {
-		return errors.New("Could not open required file routes.txt")
+		return fmt.Errorf("could not open required file routes.txt")
 	}
 
 	reader := NewCsvParser(file)
@@ -282,7 +282,7 @@ func (feed *Feed) parseTrips(path string) (err error) {
 	file, e := feed.getFile(path, "trips.txt")
 
 	if e != nil {
-		return errors.New("Could not open required file trips.txt")
+		return fmt.Errorf("could not open required file trips.txt")
 	}
 
 	reader := NewCsvParser(file)
@@ -330,7 +330,7 @@ func (feed *Feed) parseStopTimes(path string) (err error) {
 	file, e := feed.getFile(path, "stop_times.txt")
 
 	if e != nil {
-		return errors.New("Could not open required file stop_times.txt")
+		return fmt.Errorf("could not open required file stop_times.txt")
 	}
 	reader := NewCsvParser(file)
 

@@ -7,7 +7,6 @@
 package gtfsparser
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -51,7 +50,7 @@ func createFrequency(r map[string]string, trips map[string]*gtfs.Trip) {
 	if val, ok := trips[tripid]; ok {
 		trip = val
 	} else {
-		panic(errors.New("No trip with id " + r["trip_id"] + " found."))
+		panic(fmt.Errorf("no trip with id %s found", r["trip_id"]))
 	}
 
 	a.Exact_times = getBool("exact_times", r, false)
@@ -65,13 +64,13 @@ func createRoute(r map[string]string, agencies map[string]*gtfs.Agency) *gtfs.Ro
 	a := new(gtfs.Route)
 	a.Id = getString("route_id", r, true)
 
-	var aId = getString("agency_id", r, false)
+	var aID = getString("agency_id", r, false)
 
-	if len(aId) != 0 {
-		if val, ok := agencies[aId]; ok {
+	if len(aID) != 0 {
+		if val, ok := agencies[aID]; ok {
 			a.Agency = val
 		} else {
-			panic(errors.New("No agency with id " + aId + " found."))
+			panic(fmt.Errorf("no agency with id %s found", aID))
 		}
 	}
 
@@ -159,13 +158,13 @@ func createStopTime(r map[string]string, stops map[string]*gtfs.Stop, trips map[
 	if val, ok := trips[getString("trip_id", r, true)]; ok {
 		trip = val
 	} else {
-		panic(errors.New("No trip with id " + getString("trip_id", r, true) + " found."))
+		panic(fmt.Errorf("no trip with id %s found", getString("trip_id", r, true)))
 	}
 
 	if val, ok := stops[getString("stop_id", r, true)]; ok {
 		a.Stop = val
 	} else {
-		panic(errors.New("No stop with id " + getString("stop_id", r, true) + " found."))
+		panic(fmt.Errorf("no stop with id %s found", getString("stop_id", r, true)))
 	}
 
 	a.Arrival_time = getString("arrival_time", r, true)
@@ -190,13 +189,13 @@ func createTrip(r map[string]string, routes map[string]*gtfs.Route,
 	if val, ok := routes[getString("route_id", r, true)]; ok {
 		a.Route = val
 	} else {
-		panic(errors.New(fmt.Sprintf("No route with id %s found", getString("route_id", r, true))))
+		panic(fmt.Errorf("no route with id %s found", getString("route_id", r, true)))
 	}
 
 	if val, ok := services[getString("service_id", r, true)]; ok {
 		a.Service = val
 	} else {
-		panic(errors.New(fmt.Sprintf("No service with id %s found", getString("service_id", r, true))))
+		panic(fmt.Errorf("no service with id %s found", getString("service_id", r, true)))
 	}
 
 	a.Headsign = getString("trip_headsign", r, false)
@@ -204,13 +203,13 @@ func createTrip(r map[string]string, routes map[string]*gtfs.Route,
 	a.Direction_id = getRangeInt("direction_id", r, false, 0, 1)
 	a.Block_id = getString("block_id", r, false)
 
-	shapeId := getString("shape_id", r, false)
+	shapeID := getString("shape_id", r, false)
 
-	if len(shapeId) > 0 {
-		if val, ok := shapes[shapeId]; ok {
+	if len(shapeID) > 0 {
+		if val, ok := shapes[shapeID]; ok {
 			a.Shape = val
 		} else {
-			panic(errors.New(fmt.Sprintf("No shape with id %s found", shapeId)))
+			panic(fmt.Errorf("no shape with id %s found", shapeID))
 		}
 	}
 
@@ -221,17 +220,17 @@ func createTrip(r map[string]string, routes map[string]*gtfs.Route,
 }
 
 func createShapePoint(r map[string]string, shapes map[string]*gtfs.Shape) {
-	shapeId := getString("shape_id", r, true)
+	shapeID := getString("shape_id", r, true)
 	var shape *gtfs.Shape
 
-	if val, ok := shapes[shapeId]; ok {
+	if val, ok := shapes[shapeID]; ok {
 		shape = val
 	} else {
 		// create new shape
 		shape = new(gtfs.Shape)
-		shape.Id = shapeId
+		shape.Id = shapeID
 		// push it onto the shape map
-		shapes[shapeId] = shape
+		shapes[shapeID] = shape
 	}
 
 	shape.Points = append(shape.Points, &gtfs.ShapePoint{
@@ -265,7 +264,7 @@ func createFareRule(r map[string]string, fareattributes map[string]*gtfs.FareAtt
 	if val, ok := fareattributes[fareid]; ok {
 		fareattr = val
 	} else {
-		panic(errors.New(fmt.Sprintf("No fare attribute with id %s found", fareid)))
+		panic(fmt.Errorf("no fare attribute with id %s found", fareid))
 	}
 
 	// create fare attribute
@@ -278,7 +277,7 @@ func createFareRule(r map[string]string, fareattributes map[string]*gtfs.FareAtt
 		if val, ok := routes[route_id]; ok {
 			rule.Route = val
 		} else {
-			panic(errors.New(fmt.Sprintf("No route with id %s found", route_id)))
+			panic(fmt.Errorf("no route with id %s found", route_id))
 		}
 	}
 
@@ -295,13 +294,13 @@ func createTransfer(r map[string]string, stops map[string]*gtfs.Stop) *gtfs.Tran
 	if val, ok := stops[getString("from_stop_id", r, true)]; ok {
 		a.From_stop = val
 	} else {
-		panic(errors.New("No stop with id " + getString("from_stop_id", r, true) + " found."))
+		panic(fmt.Errorf("no stop with id %s found", getString("from_stop_id", r, true)))
 	}
 
 	if val, ok := stops[getString("to_stop_id", r, true)]; ok {
 		a.To_stop = val
 	} else {
-		panic(errors.New("No stop with id " + getString("to_stop_id", r, true) + " found."))
+		panic(fmt.Errorf("no stop with id %s found", getString("to_stop_id", r, true)))
 	}
 
 	a.Transfer_type = getRangeInt("transfer_type", r, false, 0, 3)
@@ -313,7 +312,7 @@ func getString(name string, r map[string]string, req bool) string {
 	if val, ok := r[name]; ok {
 		return val
 	} else if req {
-		panic(errors.New(fmt.Sprintf("Expected required field '%s'", name)))
+		panic(fmt.Errorf("expected required field '%s'", name))
 	}
 	return ""
 }
@@ -322,11 +321,11 @@ func getInt(name string, r map[string]string, req bool) int {
 	if val, ok := r[name]; ok && len(val) > 0 {
 		num, err := strconv.Atoi(val)
 		if err != nil {
-			panic(errors.New(fmt.Sprintf("Expected integer for field '%s', found '%s'", name, val)))
+			panic(fmt.Errorf("expected integer for field '%s', found '%s'", name, val))
 		}
 		return num
 	} else if req {
-		panic(errors.New(fmt.Sprintf("Expected required field '%s'", name)))
+		panic(fmt.Errorf("expected required field '%s'", name))
 	}
 	return 0
 }
@@ -335,11 +334,11 @@ func getPositiveInt(name string, r map[string]string, req bool) int {
 	if val, ok := r[name]; ok && len(val) > 0 {
 		num, err := strconv.Atoi(val)
 		if err != nil || num < 0 {
-			panic(errors.New(fmt.Sprintf("Expected positive integer for field '%s', found '%s'", name, val)))
+			panic(fmt.Errorf("expected positive integer for field '%s', found '%s'", name, val))
 		}
 		return num
 	} else if req {
-		panic(errors.New(fmt.Sprintf("Expected required field '%s'", name)))
+		panic(fmt.Errorf("expected required field '%s'", name))
 	}
 	return 0
 }
@@ -348,16 +347,16 @@ func getRangeInt(name string, r map[string]string, req bool, min int, max int) i
 	if val, ok := r[name]; ok && len(val) > 0 {
 		num, err := strconv.Atoi(val)
 		if err != nil {
-			panic(errors.New(fmt.Sprintf("Expected integer for field '%s', found '%s'", name, val)))
+			panic(fmt.Errorf("expected integer for field '%s', found '%s'", name, val))
 		}
 
 		if num > max || num < min {
-			panic(errors.New(fmt.Sprintf("Expected integer between %d and %d for field '%s', found %s", min, max, name, val)))
+			panic(fmt.Errorf("expected integer between %d and %d for field '%s', found %s", min, max, name, val))
 		}
 
 		return num
 	} else if req {
-		panic(errors.New(fmt.Sprintf("Expected required field '%s'", name)))
+		panic(fmt.Errorf("expected required field '%s'", name))
 	}
 	return 0
 }
@@ -366,11 +365,11 @@ func getRangeIntWithDefault(name string, r map[string]string, min int, max int, 
 	if val, ok := r[name]; ok && len(val) > 0 {
 		num, err := strconv.Atoi(val)
 		if err != nil {
-			panic(errors.New(fmt.Sprintf("Expected integer for field '%s', found '%s'", name, val)))
+			panic(fmt.Errorf("expected integer for field '%s', found '%s'", name, val))
 		}
 
 		if num > max || num < min {
-			panic(errors.New(fmt.Sprintf("Expected integer between %d and %d for field '%s', found %s", min, max, name, val)))
+			panic(fmt.Errorf("expected integer between %d and %d for field '%s', found %s", min, max, name, val))
 		}
 
 		return num
@@ -382,11 +381,11 @@ func getFloat(name string, r map[string]string, req bool) float32 {
 	if val, ok := r[name]; ok && len(val) > 0 {
 		num, err := strconv.ParseFloat(strings.TrimSpace(val), 32)
 		if err != nil {
-			panic(errors.New(fmt.Sprintf("Expected float for field '%s', found '%s'", name, val)))
+			panic(fmt.Errorf("expected float for field '%s', found '%s'", name, val))
 		}
 		return float32(num)
 	} else if req {
-		panic(errors.New(fmt.Sprintf("Expected required field '%s'", name)))
+		panic(fmt.Errorf("expected required field '%s'", name))
 	}
 	return 0
 }
@@ -395,11 +394,11 @@ func getBool(name string, r map[string]string, req bool) bool {
 	if val, ok := r[name]; ok && len(val) > 0 {
 		num, err := strconv.Atoi(val)
 		if err != nil || (num != 0 && num != 1) {
-			panic(errors.New(fmt.Sprintf("Expected 1 or 0 for field '%s', found '%s'", name, val)))
+			panic(fmt.Errorf("expected 1 or 0 for field '%s', found '%s'", name, val))
 		}
 		return num == 1
 	} else if req {
-		panic(errors.New(fmt.Sprintf("Expected required field '%s'", name)))
+		panic(fmt.Errorf("expected required field '%s'", name))
 	}
 	return false
 }
@@ -409,16 +408,20 @@ func getDate(name string, r map[string]string, req bool) gtfs.Date {
 	var ok bool
 	if str, ok = r[name]; !ok {
 		if req {
-			panic(errors.New(fmt.Sprintf("Expected required field '%s'", name)))
+			panic(fmt.Errorf("expected required field '%s'", name))
 		} else {
-			return gtfs.Date{0, 0, 0}
+			return gtfs.Date{
+				Day:   0,
+				Month: 0,
+				Year:  0,
+			}
 		}
 	}
 
 	var day, month, year int
 	var e error
 	if len(str) < 8 {
-		e = errors.New(fmt.Sprintf("only has %d characters, expected 8", len(str)))
+		e = fmt.Errorf("only has %d characters, expected 8", len(str))
 	}
 	if e == nil {
 		day, e = strconv.Atoi(str[6:8])
@@ -431,8 +434,12 @@ func getDate(name string, r map[string]string, req bool) gtfs.Date {
 	}
 
 	if e != nil {
-		panic(errors.New(fmt.Sprintf("Expected YYYYMMDD date for field '%s', found '%s' (%s)", name, str, e.Error())))
+		panic(fmt.Errorf("expected YYYYMMDD date for field '%s', found '%s' (%s)", name, str, e.Error()))
 	} else {
-		return gtfs.Date{int8(day), int8(month), int16(year)}
+		return gtfs.Date{
+			Day:   int8(day),
+			Month: int8(month),
+			Year:  int16(year),
+		}
 	}
 }
