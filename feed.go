@@ -9,11 +9,12 @@ package gtfsparser
 import (
 	"archive/zip"
 	"errors"
-	"github.com/geops/gtfsparser/gtfs"
 	"io"
 	"os"
 	opath "path"
 	"sort"
+
+	"github.com/fcjr/gtfsparser/gtfs"
 )
 
 type Feed struct {

@@ -14,7 +14,7 @@ Parsing of the [GTFS example feed](https://developers.google.com/transit/gtfs/ex
     
 ```go
 import (
-	"github.com/geops/gtfsparser"
+	"github.com/fcjr/gtfsparser"
 	"fmt"
 )
 
