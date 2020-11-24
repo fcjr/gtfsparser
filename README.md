@@ -1,6 +1,6 @@
 # go gtfsparser
 
-A complete*, easy to use parsing library for GTFS data. Implemented in go. Accepts folders containing GTFS files and ZIPs. Feeds are validated during parsing. ID references are transformed into pointer references where appropriate.
+An incomplete*, easy to use parsing library for GTFS data. Implemented in go. Accepts folders containing GTFS files and ZIPs. Feeds are validated during parsing. ID references are transformed into pointer references where appropriate.
 
 ## Usage
     feed := gtfsparser.NewFeed()
@@ -49,7 +49,8 @@ Done, parsed 1 agencies, 9 stops, 5 routes, 11 trips, 2 fare attributes
 
 ## *Known restrictions
 
-Validation may not be 100% complete. Tests are missing.
+* Validation may not be 100% complete. Tests are missing.
+* Does not check for conditional requirements.
 
 ## License
 
